@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · Pastejo Rotacionado</title>
+  <link rel="stylesheet" href="/apps/shared/style.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <form id="formLogin" class="login-card">
+      <h1>🐄 Pastejo Rotacionado</h1>
+      <p>Entre para acessar o sistema</p>
+      <div id="erro" class="aviso erro" hidden></div>
+      <label>Login<input type="text" id="login" autocomplete="username" required autofocus></label>
+      <label>Senha<input type="password" id="senha" autocomplete="current-password" required></label>
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+  <script src="/config.js"></script>
+  <script src="/apps/shared/auth.js"></script>
+  <script src="/apps/shared/api.js"></script>
+  <script src="/apps/login/vwLogin.js"></script>
+</body>
+</html>
