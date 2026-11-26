@@ -26,7 +26,7 @@ services:
       DB_NAME: pastejo
       DB_USER: postgres
       DB_PASSWORD: postgres
-      JWT_SECRET: troque-este-segredo
+      JWT_SECRET: ujs74wiop6333
     depends_on:
       db:
         condition: service_healthy
