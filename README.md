@@ -18,8 +18,6 @@ Sistema web para controle de **pastejo rotacionado** (módulo agrícola de um ER
 
 ## Como executar
 
-Pré-requisito: Docker Desktop aberto.
-
 ```
 docker compose up --build -d
 ```
