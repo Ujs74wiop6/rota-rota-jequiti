@@ -59,3 +59,4 @@ input:focus, select:focus { outline: 2px solid var(--verde); border-color: var(-
 .login-card h1 { text-align: center; margin-bottom: 4px; }
 .login-card p { text-align: center; color: #6b7a6c; margin-top: 0; }
 .login-card .btn { width: 100%; padding: 10px; }
+.icone { width: 80px; height: 65px; object-fit: contain; vertical-align: middle; margin-right: 9px; }

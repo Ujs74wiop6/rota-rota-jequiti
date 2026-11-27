@@ -12,5 +12,6 @@ app.get('/config.js', (req, res) => {
 
 app.use('/apps', express.static(path.join(__dirname, 'apps')));
 app.get('/', (req, res) => res.redirect('/apps/login/login.html'));
+app.use('/img', express.static(path.join(__dirname, 'img')));
 
 app.listen(PORT, () => console.log(`Front-end em http://localhost:${PORT} (API: ${API_URL})`));

@@ -2,7 +2,7 @@
 
 Trabalho 03 de Desenvolvimento Web III
 
-CRUD de **Pasto**, **Piquete**, **Animal** e **Alocado** (módulo agrícola de pastejo rotacionado), com login e JWT.
+Sistema web para controle de **pastejo rotacionado** (módulo agrícola de um ERP). Permite cadastrar **Pastos**, **Piquetes**, **Animais** e **Alocações** (qual animal está em qual piquete e por quanto tempo), com login e rotas protegidas por JWT.
 
 | Camada | Tecnologia | Porta |
 | --- | --- | --- |
@@ -11,6 +11,8 @@ CRUD de **Pasto**, **Piquete**, **Animal** e **Alocado** (módulo agrícola de p
 | Banco de dados | PostgreSQL 16 | 5431 (host) |
 
 ## Como executar
+
+Pré-requisito: Docker Desktop aberto.
 
 ```
 docker compose up --build -d
@@ -26,52 +28,66 @@ Zerar o banco: `docker compose down -v && docker compose up --build -d`
 
 ```mermaid
 erDiagram
-    PASTO ||--o{ PIQUETE : possui
-    PIQUETE ||--o{ ALOCADO : recebe
-    ANIMAL ||--o{ ALOCADO : "é alocado em"
+    PASTO ||--o{ PIQUETE : "possui (1:N)"
+    PIQUETE ||--o{ ALOCADO : "recebe (1:N)"
+    ANIMAL ||--o{ ALOCADO : "é alocado em (1:N)"
 
     USUARIO {
-        usuarioid serial PK
-        login varchar(50) UK
-        senha varchar(100)
-        removido boolean
+        serial usuarioid PK
+        varchar(50) login UK
+        varchar(100) senha "hash bcrypt"
+        boolean removido
     }
 
     PASTO {
         serial pastoid PK
-        descricao varchar(100)
-        areatotal numeric(10,2)
-        removido boolean
+        varchar(100) descricao
+        numeric(10,2) areatotal
+        boolean removido
     }
 
     PIQUETE {
-        piqueteid serial PK
-        descricao varchar(100)
-        latitude numeric(10,7)
-        longitude numeric(10,7)
-        pastoidfk integer FK
-        removido boolean
+        serial piqueteid PK
+        varchar(100) descricao
+        numeric(10,7) latitude
+        numeric(10,7) longitude
+        integer pastoidfk FK
+        boolean removido
     }
 
     ANIMAL {
-        animalid serial PK
-        nome varchar(100)
-        datanasc date
-        removido boolean
+        serial animalid PK
+        varchar(100) nome
+        date datanasc
+        boolean removido
     }
 
     ALOCADO {
-        alocadoid serial PK
-        animalidifk integer FK
-        piqueteidfk integer FK
-        datainicio date
-        datafinal date
-        removido boolean
+        serial alocadoid PK
+        integer animalidifk FK
+        integer piqueteidfk FK
+        date datainicio
+        date datafinal "opcional"
+        boolean removido
     }
 ```
 
-A tabela **ALOCADO** representa o relacionamento N:N entre animais e piquetes, registrando o período de permanência.
+- **Pasto → Piquete (1:N):** um pasto tem vários piquetes; cada piquete pertence a um pasto.
+- **Piquete → Alocado (1:N)** e **Animal → Alocado (1:N):** cada alocação liga um animal a um piquete.
+- **Animal ↔ Piquete (N:N):** um animal passa por vários piquetes e um piquete recebe vários animais. A tabela **ALOCADO** resolve essa relação e registra o período (`datafinal` vazia = ainda está no piquete).
+- **USUARIO** serve só para o login e não se relaciona com as demais.
 
+---
+
+## Observações
+
+- **Senha com hash (bcrypt):** a senha não é guardada em texto puro. `dw3` vira um hash de 60 caracteres (`$2a$06$...`), gerado no banco (`crypt('dw3', gen_salt('bf'))`, em `database/init.sql`) e conferido no login com `bcrypt.checkpw`.
+- O hash muda a cada criação do banco (o sal é aleatório), por isso o valor não está escrito aqui.
+- **Token:** a API devolve um **JWT válido por 1 hora**. Sem token válido, as rotas respondem `401` e o front volta para o login.
+- **Exclusão lógica:** excluir só marca `removido = true`, e nada é apagado do banco.
+- As exclusões não são em cascata: apagar um pasto, piquete ou animal não remove os registros ligados a ele.
+- O sistema não impede que um animal tenha duas alocações com períodos sobrepostos.
+- Senha do banco e `JWT_SECRET` ficam no arquivo `.env`, que não vai para o GitHub. O `.env.example` mostra quais variáveis são necessárias.
 
 ## Estrutura
 
@@ -83,7 +99,7 @@ database/init.sql
 
 ## Contrato da API
 
-Todas as rotas, exceto `POST /login`, exigem `Authorization: Bearer <jwt>` (401 se ausente/inválido). Datas em `YYYY-MM-DD`, campos numéricos como número JSON.
+Todas as rotas, exceto `POST /login`, exigem `Authorization: Bearer <jwt>`. Datas em `AAAA-MM-DD`, campos numéricos como número JSON.
 
 | Operação | Rota | Corpo | Resposta |
 | --- | --- | --- | --- |
@@ -94,13 +110,13 @@ Todas as rotas, exceto `POST /login`, exigem `Authorization: Bearer <jwt>` (401 
 | UpdateXXX | `PUT /<tabela>/<id>` | campos da tabela | objeto atualizado |
 | DeleteXXX | `DELETE /<tabela>/<id>` | — | `{mensagem}` (soft delete) |
 
-Tabelas: `pasto`, `piquete`, `animal`, `alocado`. Erros devolvem `{erro: "texto"}`.
+Tabelas: `pasto`, `piquete`, `animal`, `alocado`. Erros devolvem `{erro: "texto"}` (`400` dados inválidos, `401` sem login, `404` não encontrado).
 
-Campos (mesmos nomes do modelo relacional do trabalho):
+Campos:
 
 - `pasto`: `pastoid`, `descricao`, `areatotal`
 - `piquete`: `piqueteid`, `descricao`, `latitude`, `longitude`, `pastoidfk`
 - `animal`: `animalid`, `nome`, `datanasc`
 - `alocado`: `alocadoid`, `animalidifk`, `piqueteidfk`, `datainicio`, `datafinal` (opcional)
 
-O back-end precisa liberar CORS para `http://localhost:3000`.
+Regras principais: área maior que zero, coordenadas válidas, pasto/animal/piquete informados precisam existir, e `datafinal` não pode ser anterior a `datainicio`.
