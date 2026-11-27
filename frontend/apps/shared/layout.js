@@ -24,16 +24,34 @@ function montarNav(ativo) {
     .join('');
   document.getElementById('nav').innerHTML = `
     <nav class="topo">
-      <span class="marca">🐄 Pastejo Rotacionado</span>
+      <span class="marca">Rota-Rota Jequiti</span>
       <div class="links">${links}</div>
       <div class="usuario">${esc(Auth.usuario())} <button id="btnSair" class="btn-sec">Sair</button></div>
     </nav>`;
   document.getElementById('btnSair').addEventListener('click', Auth.sair);
 }
 
+function montarImagemSistema() {
+  const principal = document.querySelector('main');
+  if (!principal) return;
+
+  const layout = document.createElement('div');
+  layout.className = 'layout-sistema';
+
+  const imagem = document.createElement('img');
+  imagem.src = '/img/perfil.jpg';
+  imagem.alt = 'Imagem do sistema';
+  imagem.className = 'imagem-sistema';
+
+  principal.parentNode.insertBefore(layout, principal);
+  layout.appendChild(imagem);
+  layout.appendChild(principal);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('nav')) {
     Auth.exigirLogin();
     montarNav(document.body.dataset.app);
+    montarImagemSistema();
   }
 });

@@ -24,7 +24,7 @@ if (document.body.dataset.app === 'alocado') {
       { campo: 'piqueteidfk', rotulo: 'Piquete', fmt: (v, l, ctx) => esc(ctx.piquetes[v] ?? v) },
       { campo: 'datainicio', rotulo: 'Início', fmt: (v) => fmtData(v) },
       //{ campo: 'datafinal', rotulo: 'Final', fmt: (v) => (v ? fmtData(v) : '...') },
-      { campo: 'datafinal', rotulo: 'Final', fmt: (v) => (v ? fmtData(v) : '<img src="/img/sucesso.png" alt="..." title="..." class="icone">') },
+      { campo: 'datafinal', rotulo: 'Final', fmt: (v) => (v ? fmtData(v) : '<img src="/img/erro.png" alt="..." title="..." class="icone">') },
     ],
     campos: [
       {
