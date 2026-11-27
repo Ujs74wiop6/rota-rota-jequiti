@@ -1,8 +1,12 @@
 # rota-rota-jequiti: projeto de pastejo rotacionado
 
+<img src="frontend/img/perfil.jpg" alt="Logo do projeto" align="left" width="180" hspace="16" />
+
 Trabalho 03 de Desenvolvimento Web III
 
 Sistema web para controle de **pastejo rotacionado** (módulo agrícola de um ERP). Permite cadastrar **Pastos**, **Piquetes**, **Animais** e **Alocações** (qual animal está em qual piquete e por quanto tempo), com login e rotas protegidas por JWT.
+
+<br clear="left" />
 
 | Camada | Tecnologia | Porta |
 | --- | --- | --- |
