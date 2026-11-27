@@ -1,15 +1,16 @@
 from db import get_conexao
 
-def buscar_usuario(login, senha):
+
+def buscar_usuario(login):
     conn = get_conexao()
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT usuarioid, login
+        SELECT usuarioid, login, senha
         FROM usuario
-        WHERE login = %s AND senha = %s AND removido = FALSE
+        WHERE login = %s AND removido = FALSE
         """,
-        (login, senha),
+        (login,),
     )
     usuario = cur.fetchone()
     conn.close()
