@@ -8,6 +8,8 @@ Sistema web para controle de **pastejo rotacionado** (módulo agrícola de um ER
 
 <br clear="left" />
 
+<br>
+
 | Camada | Tecnologia | Porta |
 | --- | --- | --- |
 | Front-end | Node.js + Express (HTML/CSS/JS puro) | 3000 |
