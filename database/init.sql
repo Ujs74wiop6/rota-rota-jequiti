@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE usuario (
     usuarioid SERIAL PRIMARY KEY,
     login VARCHAR(50) NOT NULL UNIQUE,
@@ -40,4 +42,4 @@ CREATE TABLE alocado (
 );
 
 -- usuário inicial: login dw3 / senha dw3
-INSERT INTO usuario (login, senha) VALUES ('dw3', 'dw3');
+INSERT INTO usuario (login, senha) VALUES ('dw3', crypt('dw3', gen_salt('bf')));
