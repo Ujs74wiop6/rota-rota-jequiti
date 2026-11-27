@@ -1,17 +1,19 @@
+name: rota-rota-jequiti
+
 services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: pastejo
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5431:5432"
+      - "${DB_PORT_HOST}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d pastejo"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -23,10 +25,10 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: "5432"
-      DB_NAME: pastejo
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      JWT_SECRET: ujs74wiop6333
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       db:
         condition: service_healthy
