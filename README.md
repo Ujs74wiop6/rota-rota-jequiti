@@ -96,27 +96,3 @@ backend/apps/<modulo>/controller + model   (pasto, piquete, animal, alocado, log
 frontend/apps/<modulo>/vw<Modulo>.js       (+ apps/shared: auth, api, crud, layout)
 database/init.sql
 ```
-
-## Contrato da API
-
-Todas as rotas, exceto `POST /login`, exigem `Authorization: Bearer <jwt>`. Datas em `AAAA-MM-DD`, campos numéricos como número JSON.
-
-| Operação | Rota | Corpo | Resposta |
-| --- | --- | --- | --- |
-| Login | `POST /login` | `{login, senha}` | `{token, usuario}` |
-| GetAllXXX | `GET /<tabela>` | — | lista (só `removido = false`) |
-| GetXXXByID | `GET /<tabela>/<id>` | — | objeto ou 404 |
-| InsertXXX | `POST /<tabela>` | campos da tabela | objeto criado (201) |
-| UpdateXXX | `PUT /<tabela>/<id>` | campos da tabela | objeto atualizado |
-| DeleteXXX | `DELETE /<tabela>/<id>` | — | `{mensagem}` (soft delete) |
-
-Tabelas: `pasto`, `piquete`, `animal`, `alocado`. Erros devolvem `{erro: "texto"}` (`400` dados inválidos, `401` sem login, `404` não encontrado).
-
-Campos:
-
-- `pasto`: `pastoid`, `descricao`, `areatotal`
-- `piquete`: `piqueteid`, `descricao`, `latitude`, `longitude`, `pastoidfk`
-- `animal`: `animalid`, `nome`, `datanasc`
-- `alocado`: `alocadoid`, `animalidifk`, `piqueteidfk`, `datainicio`, `datafinal` (opcional)
-
-Regras principais: área maior que zero, coordenadas válidas, pasto/animal/piquete informados precisam existir, e `datafinal` não pode ser anterior a `datainicio`.
